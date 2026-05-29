@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Energy-Based Task Manager</title>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <h1>Task Manager</h1>
+        </header>
+        <!-- Global Filter Bar -->
+        <div class="filter-bar">
+            <button class="filter-btn high-energy active" data-filter="all">
+                <span class="filter-icon">📊</span>
+                All Tasks
+            </button>
+            <button class="filter-btn high-energy" data-filter="high">
+                <span class="filter-icon">⚡</span>
+                High Energy
+            </button>
+            <button class="filter-btn medium-energy" data-filter="medium">
+                <span class="filter-icon">🔋</span>
+                Medium Energy
+            </button>
+            <button class="filter-btn low-energy" data-filter="low">
+                <span class="filter-icon">💤</span>
+                Low Energy
+            </button>
+        </div>
+
+        <!-- Main Content Layout -->
+        <div class="main-content">
+            <!-- Task Creation Form (Left Side) -->
+            <form class="task-form" id="taskForm">
+                <h1>Create Task</h1>
+                <div class="form-group">
+                    <label class="form-label">Task Title</label>
+                    <input 
+                        type="text" 
+                        class="task-input" 
+                        id="taskTitle" 
+                        placeholder="What's your main task?"
+                        required
+                        autocomplete="off"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Description <span class="optional">(Optional)</span></label>
+                    <input 
+                        type="text" 
+                        class="task-input" 
+                        id="taskDescription" 
+                        placeholder="Add more details about this task..."
+                        autocomplete="off"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Difficulty Level</label>
+                    <div class="energy-options">
+                        <div class="energy-option">
+                            <input type="radio" id="energyHigh" name="energy" value="high" class="energy-radio" required>
+                            <label for="energyHigh" class="energy-label">
+                                <span>⚡</span>
+                                <span>High</span>
+                            </label>
+                        </div>
+                        <div class="energy-option">
+                            <input type="radio" id="energyMedium" name="energy" value="medium" class="energy-radio" required>
+                            <label for="energyMedium" class="energy-label">
+                                <span>🔋</span>
+                                <span>Medium</span>
+                            </label>
+                        </div>
+                        <div class="energy-option">
+                            <input type="radio" id="energyLow" name="energy" value="low" class="energy-radio" required>
+                            <label for="energyLow" class="energy-label">
+                                <span>💤</span>
+                                <span>Low</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Estimated Time (Optional)</label>
+                    <div class="time-picker-group">
+                        <div class="time-picker-unit">
+                            <label class="time-picker-label">Hours</label>
+                            <div style="display: flex; gap: 6px; align-items: center;">
+                                <div class="time-picker-buttons">
+                                    <button type="button" class="time-picker-btn" data-action="inc" data-unit="hours">+</button>
+                                    <button type="button" class="time-picker-btn" data-action="dec" data-unit="hours">−</button>
+                                </div>
+                                <input type="number" class="time-picker-input" id="timerHours" min="0" max="23" value="0">
+                            </div>
+                        </div>
+                        <div class="time-picker-unit">
+                            <label class="time-picker-label">Minutes</label>
+                            <div style="display: flex; gap: 6px; align-items: center;">
+                                <div class="time-picker-buttons">
+                                    <button type="button" class="time-picker-btn" data-action="inc" data-unit="minutes">+</button>
+                                    <button type="button" class="time-picker-btn" data-action="dec" data-unit="minutes">−</button>
+                                </div>
+                                <input type="number" class="time-picker-input" id="timerMinutes" min="0" max="59" value="25">
+                            </div>
+                        </div>
+                        <div class="time-picker-unit">
+                            <label class="time-picker-label">Seconds</label>
+                            <div style="display: flex; gap: 6px; align-items: center;">
+                                <div class="time-picker-buttons">
+                                    <button type="button" class="time-picker-btn" data-action="inc" data-unit="seconds">+</button>
+                                    <button type="button" class="time-picker-btn" data-action="dec" data-unit="seconds">−</button>
+                                </div>
+                                <input type="number" class="time-picker-input" id="timerSeconds" min="0" max="59" value="0">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="time-display" id="timeDisplay">25 minutes</div>
+                </div>
+
+                <button type="submit" class="submit-btn">+ Add Task</button>
+            </form>
+
+            <!-- Task List (Right Side) -->
+            <div class="tasks-container">
+                <div class="section-title">📋 Active Tasks</div>
+                <div class="task-list" id="taskList"></div>
+
+                <!-- Empty State -->
+                <div class="empty-state" id="emptyState" style="display: none;">
+                    <div class="empty-state-icon">✨</div>
+                    <div class="empty-state-text">No tasks yet</div>
+                    <div class="empty-state-subtext">Create one to get started!</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Archive Section -->
+        <div class="archive-section" id="archiveSection" style="display: none;">
+            <div class="archive-grid">
+                <!-- Completed Tasks -->
+                <div class="archive-column">
+                    <div class="section-header">
+                        <div class="section-header-title completed">✅ Completed Tasks</div>
+                        <button class="clear-btn" id="clearCompletedBtn" title="Clear all completed tasks">Clear All</button>
+                    </div>
+                    <div class="task-list" id="completedList"></div>
+                    <div class="empty-state" id="emptyCompleted" style="display: none;">
+                        <div class="empty-state-icon">🎉</div>
+                        <div class="empty-state-text">No completed tasks</div>
+                        <div class="empty-state-subtext">Great job staying on top!</div>
+                    </div>
+                </div>
+
+                <!-- Deleted Tasks -->
+                <div class="archive-column">
+                    <div class="section-header">
+                        <div class="section-header-title deleted">🗑️ Deleted Tasks</div>
+                        <button class="clear-btn" id="clearDeletedBtn" title="Clear all deleted tasks">Clear All</button>
+                    </div>
+                    <div class="task-list" id="deletedList"></div>
+                    <div class="empty-state" id="emptyDeleted" style="display: none;">
+                        <div class="empty-state-icon">📭</div>
+                        <div class="empty-state-text">No deleted tasks</div>
+                        <div class="empty-state-subtext">Your trash is clean!</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Congratulations Popup -->
+    <div class="congrats-popup" id="congratsPopup">
+        <div class="congrats-popup-icon">🎉</div>
+        <div class="congrats-popup-title">Congrats!</div>
+        <div class="congrats-popup-text">Task Completed</div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal-overlay" id="deleteModal">
+        <div class="modal">
+            <div class="modal-header">
+                <span>⚠️</span>
+                Delete Task?
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete this task? This action cannot be undone.
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn cancel" id="cancelDelete">Cancel</button>
+                <button class="modal-btn confirm" id="confirmDelete">Delete</button>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="scroll-indicator" id="scrollIndicator">
+    <span>Scroll to View Archive</span>
+    <span class="scroll-indicator-arrow">▼</span>
+    </div>
+
+    <!-- Clear Archive Confirmation Modal -->
+    <div class="modal-overlay" id="clearModal">
+        <div class="modal">
+            <div class="modal-header">
+                <span>🗑️</span>
+                <span id="clearModalTitle">Clear Tasks?</span>
+            </div>
+            <div class="modal-body" id="clearModalBody">
+                Are you sure you want to clear all tasks? This action cannot be undone.
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn cancel" id="cancelClear">Cancel</button>
+                <button class="modal-btn confirm" id="confirmClear">Clear</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
